@@ -1,0 +1,34 @@
+# Visual Studio related files
+.vs/                  # Visual Studio hidden folder (user-specific settings, caches, etc.)
+*.suo                 # Visual Studio Solution User Options file
+*.user                # Visual Studio user options files
+*.bak                 # Backup files
+*.log                 # Log files
+*.obj                 # Object files
+*.pdb                 # Program database files
+*.resharper           # ReSharper files
+*.DotSettings         # ReSharper/JetBrains Rider settings
+
+# Build output directories
+[Bb]in/               # Compiled binaries
+[Oo]bj/               # Intermediate object files
+
+# Package Manager directories
+packages/             # NuGet packages (if using .NET Framework)
+node_modules/         # Node.js dependencies (if you have a frontend or Node.js backend)
+venv/                 # Python virtual environment (common for ML projects)
+.venv/                # Another common name for Python virtual environment
+env/                  # Another common name for Python virtual environment
+.Python/              # Python cache or environment files (sometimes created by VS)
+
+# Python specific files
+__pycache__/          # Python compiled bytecode
+*.pyc                 # Python compiled files
+*.pyd                 # Python dynamic link library
+*.pyo                 # Python optimized compiled files
+*.ipynb_checkpoints/  # Jupyter Notebook checkpoints
+
+# Operating System files
+.DS_Store             # macOS directory metadata
+Thumbs.db             # Windows thumbnail cache
+desktop.ini           # Windows folder customization

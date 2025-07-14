@@ -21,7 +21,7 @@ app.MapPost("/process", async (HttpRequest request) =>
     var clusteredWithOutliers = OutliersPerVolumeGroup.DetectOutliersPerCluster(clustered, "VolumeCluster", new[] { "Quantity", "Price" }); // your function
 
     // Return JSON
-    string jsonResponse = DataHandling.SerializeProcessedClusterData(clusteredWithOutliers.Data, clusteredWithOutliers.Boundaries);
+    string jsonResponse = DataHandling.SerializeProcessedClusterData(clusteredWithOutliers, Boundaries);
     return Results.Ok(jsonResponse);
 });
 

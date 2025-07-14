@@ -7,6 +7,7 @@ using System.Data; // For DataTable
 using System.Globalization; // For CultureInfo.InvariantCulture
 using System.IO;  // For StreamWriter
 using System.Text.Json; // For Json Serialization
+using System.Text.Json.Nodes;
 using System.Xml;
 
 
@@ -166,5 +167,79 @@ public static class DataHandling
 
         return (dataTable, clusterBoundaries, bufferZones, priceMeans, curvePoints);
     }
+
+    public static DataTable DeserializeStandardizedInput(string json)
+    {
+        var dataTable = new DataTable();
+        var rows = System.Text.Json.JsonSerializer.Deserialize<JsonArray>(json);
+
+        if (rows == null || rows.Count == 0)
+            return dataTable;
+
+        // Create columns from keys in the first row
+        var firstRow = rows[0].AsObject();
+        // Corrected: Iterate over the JsonObject to get keys
+        foreach (var property in firstRow)
+        {
+            // Assuming all values are doubles as per your column type
+            dataTable.Columns.Add(property.Key, typeof(double));
+        }
+
+        // Add rows to the DataTable
+        foreach (var rowNode in rows)
+        {
+            var rowObj = rowNode.AsObject();
+            var row = dataTable.NewRow();
+            foreach (DataColumn col in dataTable.Columns)
+            {
+
+                JsonNode valueNode = rowObj[col.ColumnName];
+                if (valueNode != null)
+                {
+                    row[col.ColumnName] = Convert.ToDouble(valueNode.ToString());
+                }
+                else
+                {
+                    row[col.ColumnName] = DBNull.Value;
+                }
+            }
+            dataTable.Rows.Add(row);
+        }
+
+        return dataTable;
+    }
+
+    public static string SerializeProcessedClusterData(DataTable clusteredData, List<double> standardizedBoundaries)
+    {
+        // 1. Convert DataTable to List<Dictionary<string, object>>
+        var rows = new List<Dictionary<string, object>>();
+        foreach (DataRow row in clusteredData.Rows)
+        {
+            var dict = new Dictionary<string, object>();
+            foreach (DataColumn col in clusteredData.Columns)
+            {
+                dict[col.ColumnName] = row[col];
+            }
+            rows.Add(dict);
+        }
+
+        // 2. Create root JSON object
+        var root = new Dictionary<string, object>
+    {
+        { "clusteredData", rows },
+        { "standardizedClusterBoundaries", standardizedBoundaries }
+    };
+
+        // 3. Serialize with JSON options
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = false,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
+        return System.Text.Json.JsonSerializer.Serialize(root, options);
+    }
+
+
 }
 
